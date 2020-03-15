@@ -313,8 +313,8 @@ if (isset($_POST['apply'])) {
 	if ($_POST['ddnsupdate'] && !is_domain($_POST['ddnsdomain'])) {
 		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
 	}
-	if ($_POST['ddnsupdate'] && !is_ipaddrv4($_POST['ddnsdomainprimary'])) {
-		$input_errors[] = gettext("A valid primary domain name server IPv4 address must be specified for the dynamic domain name.");
+	if ($_POST['ddnsupdate'] && !is_ipaddrv6($_POST['ddnsdomainprimary'])) {
+		$input_errors[] = gettext("A valid primary domain name server IPv6 address must be specified for the dynamic domain name.");
 	}
 	if ($_POST['ddnsupdate'] && (!$_POST['ddnsdomainkeyname'] || !$_POST['ddnsdomainkeyalgorithm'] || !$_POST['ddnsdomainkey'])) {
 		$input_errors[] = gettext("A valid domain key name, algorithm and secret must be specified.");
@@ -329,15 +329,15 @@ if (isset($_POST['apply'])) {
 		}
 	}
 
-	if (($_POST['ntp1'] && !is_ipaddrv6($_POST['ntp1'])) ||
-	    ($_POST['ntp2'] && !is_ipaddrv6($_POST['ntp2'])) ||
-	    ($_POST['ntp3'] && !is_ipaddrv6($_POST['ntp3']))) {
-		$input_errors[] = gettext("A valid IPv6 address must be specified for the primary/secondary NTP servers.");
+	if (($_POST['ntp1'] && (!is_ipaddrv6($_POST['ntp1']) && !is_hostname($_POST['ntp1']))) ||
+	    ($_POST['ntp2'] && (!is_ipaddrv6($_POST['ntp2']) && !is_hostname($_POST['ntp2']))) ||
+	    ($_POST['ntp3'] && (!is_ipaddrv6($_POST['ntp3']) && !is_hostname($_POST['ntp3'])))) {
+		$input_errors[] = gettext("A valid IPv6 address or hostname must be specified for the primary/secondary NTP servers.");
 	}
 	if (($_POST['domain'] && !is_domain($_POST['domain']))) {
 		$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
 	}
-	if ($_POST['tftp'] && !is_ipaddr($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp'])) {
+	if ($_POST['tftp'] && !is_ipaddrv6($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp'])) {
 		$input_errors[] = gettext("A valid IPv6 address or hostname must be specified for the TFTP server.");
 	}
 	if (($_POST['bootfile_url'] && !is_URL($_POST['bootfile_url']))) {
@@ -800,8 +800,8 @@ $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'DDNS Server IP',
 	$pconfig['ddnsdomainprimary'],
-	'V4'
-))->setHelp('Enter the primary domain name server IPv4 address for the dynamic domain name.');
+	'V6'
+))->setHelp('Enter the primary domain name server IPv6 address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkeyname',
